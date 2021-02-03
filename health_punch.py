@@ -5,6 +5,7 @@
 @file: health_punch.py
 @author: Skye Young
 @time: 2021/2/2 0002 14:46
+@description: 由 https://github.com/thredreams （他并没有发布）的代码整理、修改而来
 """
 from re import search
 from time import localtime, strftime
@@ -52,7 +53,7 @@ def login(session: Session, username: str, password: str) -> Session:
     :raise: StepErr
     """
     # 登录链接
-    url = "http://ids2.just.edu.cn/cas/login?service=http://ehall.just.edu.cn/default/work/jkd/jkxxtb/jkxxcj.jsp"
+    url = 'http://ids2.just.edu.cn/cas/login?service=http://ehall.just.edu.cn/default/work/jkd/jkxxtb/jkxxcj.jsp'
     # 登陆参数
     data = {
         'username': username,
@@ -96,16 +97,12 @@ def get_punch_info(session: Session, username: str) -> dict:
     """
     # 打卡要用的数据，根据原系统中之前的打卡信息更新
     info_data = {'id': 0, "sqrid": "", "sqbmid": "", "rysf": "", "sqrmc": "", "gh": "", "sqbmmc": "", "sfzh": "",
-                 "xb": "",
-                 "jgshen": "", "jgshi": "", "lxdh": "", "jqdt": "", "czdzshen": "",
-                 "czdzshi": "",
-                 "czdzqu": "",
-                 "czdz": "",
-                 "tbrq": "", "jrszd": "", "jrstzk": "", "sfdghtjyq": "", "sfyyqryjc": "", "sfyqgzdyqryjc": "",
-                 "sfjcysqzrq": "", "sflz": "", "lzsj": "", "lzjtgj": "", "lzbc": "", "sffz": "", "fhzjsj": "",
-                 "fhzjgj": "",
-                 "fhzjbc": "", "fztztkdd": "", "glqsrq": '["",""]', "sffr": "", "tw": "", "zwtw": "", "jclx": "",
-                 "bz": "", "_ext": "{}", "tjsj": "", "__type": "sdo:com.sudytech.work.suda.jkxxtb.jkxxtb.TSudaJkxxtb"}
+                 "xb": "", "jgshen": "", "jgshi": "", "lxdh": "", "jqdt": "", "czdzshen": "", "czdzshi": "",
+                 "czdzqu": "", "czdz": "", "tbrq": "", "jrszd": "", "jrstzk": "", "sfdghtjyq": "", "sfyyqryjc": "",
+                 "sfyqgzdyqryjc": "", "sfjcysqzrq": "", "sflz": "", "lzsj": "", "lzjtgj": "", "lzbc": "", "sffz": "",
+                 "fhzjsj": "", "fhzjgj": "", "fhzjbc": "", "fztztkdd": "", "glqsrq": '["",""]', "sffr": "", "tw": "",
+                 "zwtw": "", "jclx": "", "bz": "", "_ext": "{}", "tjsj": "",
+                 "__type": "sdo:com.sudytech.work.suda.jkxxtb.jkxxtb.TSudaJkxxtb"}
 
     # 获取今天的时间
     (date, time) = get_time()
@@ -131,9 +128,6 @@ def get_punch_info(session: Session, username: str) -> dict:
                 info_data[k] = last_punch[k.upper()]
         # 更新填报日期和时间
         info_data['tbrq'] = date
-        # 删除 id
-        # FIXME: 这个没啥用？
-        # del info_data['id']
 
         return info_data
 
@@ -155,7 +149,7 @@ def lets_punch(session: Session, username: str) -> Session:
         raise
     else:
         res: dict = session.post(url, json=data).json()
-        # 需要检查 result 是否存在，因为可能没有
+        # 需要检查 result 是否存在，因为在出现系统异常的时候会没有
         if 'result' not in res.keys() or res['result'] is not '1':
             raise StepErr('0: 提交失败')
         else:
@@ -168,6 +162,7 @@ def logout(session: Session) -> None:
     :param session: Session
     :return: None
     """
+    # 添加返回数据处理
     session.get(
         "http://my.just.edu.cn/_web/fusionportal/signOut.jsp?_p=YXM9MSZwPTEmbT1OJg__&service=http://my.just.edu.cn/")
     session.get("http://ids2.just.edu.cn/cas/logout?service=http%3A%2F%2Fmy.just.edu.cn%2F")
