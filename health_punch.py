@@ -97,13 +97,15 @@ def get_punch_info(session: Session, username: str) -> dict:
     # 打卡要用的数据，根据原系统中之前的打卡信息更新
     info_data = {'id': 0, "sqrid": "", "sqbmid": "", "rysf": "", "sqrmc": "", "gh": "", "sqbmmc": "", "sfzh": "",
                  "xb": "",
-                 "jgshen": "", "jgshi": "", "lxdh": "", "jqdt": "", "czdzshen": "", "czdzshi": "", "czdzqu": "",
+                 "jgshen": "", "jgshi": "", "lxdh": "", "jqdt": "", "czdzshen": "",
+                 "czdzshi": "",
+                 "czdzqu": "",
                  "czdz": "",
                  "tbrq": "", "jrszd": "", "jrstzk": "", "sfdghtjyq": "", "sfyyqryjc": "", "sfyqgzdyqryjc": "",
                  "sfjcysqzrq": "", "sflz": "", "lzsj": "", "lzjtgj": "", "lzbc": "", "sffz": "", "fhzjsj": "",
                  "fhzjgj": "",
                  "fhzjbc": "", "fztztkdd": "", "glqsrq": '["",""]', "sffr": "", "tw": "", "zwtw": "", "jclx": "",
-                 "bz": "", "_ext": "", "tjsj": "", "__type": "sdo:com.sudytech.work.suda.jkxxtb.jkxxtb.TSudaJkxxtb"}
+                 "bz": "", "_ext": "{}", "tjsj": "", "__type": "sdo:com.sudytech.work.suda.jkxxtb.jkxxtb.TSudaJkxxtb"}
 
     # 获取今天的时间
     (date, time) = get_time()
@@ -129,19 +131,19 @@ def get_punch_info(session: Session, username: str) -> dict:
                 info_data[k] = last_punch[k.upper()]
         # 更新填报日期和时间
         info_data['tbrq'] = date
-        info_data['tbsj'] = time
         # 删除 id
-        del info_data['id']
+        # FIXME: 这个没啥用？
+        # del info_data['id']
 
         return info_data
 
 
-def lets_punch(session: Session, username: str) -> None:
+def lets_punch(session: Session, username: str) -> Session:
     """
     填报健康信息操作，直接使用
     :param session:
     :param username:
-    :return: None
+    :return: Session
     :raise: StepErr
     """
     # 填报信息链接
@@ -149,12 +151,26 @@ def lets_punch(session: Session, username: str) -> None:
     # 尝试先获取信息
     try:
         data = {'entity': get_punch_info(session, username)}
+    except StepErr:
+        raise
+    else:
         res: dict = session.post(url, json=data).json()
         # 需要检查 result 是否存在，因为可能没有
         if 'result' not in res.keys() or res['result'] is not '1':
             raise StepErr('0: 提交失败')
-    except StepErr:
-        raise
+        else:
+            return session
+
+
+def logout(session: Session) -> None:
+    """
+    登出操作，直接使用
+    :param session: Session
+    :return: None
+    """
+    session.get(
+        "http://my.just.edu.cn/_web/fusionportal/signOut.jsp?_p=YXM9MSZwPTEmbT1OJg__&service=http://my.just.edu.cn/")
+    session.get("http://ids2.just.edu.cn/cas/logout?service=http%3A%2F%2Fmy.just.edu.cn%2F")
 
 
 def main():
@@ -165,7 +181,9 @@ def main():
         # 这个 assert 啥的有没有都无所谓的啦，只不过看没啥接收数据的难受
         assert inited_session() \
                | F(login, username=username, password=password) \
-               | F(lets_punch, username=username) is None
+               | F(lets_punch, username=username) \
+               | F(logout) \
+               is None
         print(f'{username}健康信息填报成功')
     except StepErr as err:
         print(err)
