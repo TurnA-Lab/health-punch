@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+@file: web.py
+@author: Skye Young
+@time: 2021/2/5 0005 1:39
+@description: 
+"""
+
 from typing import Union
 
 import uvicorn
