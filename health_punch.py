@@ -7,6 +7,7 @@
 @time: 2021/2/2 0002 14:46
 @description: 由 https://github.com/thredreams （他并没有发布）的代码整理、修改而来
 """
+from functools import partial
 from re import search
 from time import localtime, strftime
 
@@ -14,7 +15,17 @@ from lxml.html import fromstring
 from requests import Session
 from requests.adapters import HTTPAdapter
 
-from util import F
+
+class F(partial):
+    """
+    在 Python 中实现管道
+    来自：https://www.v2ex.com/t/743574
+    """
+
+    def __ror__(self, other):
+        if isinstance(other, tuple):
+            return self(*other)
+        return self(other)
 
 
 class StepErr(Exception):
