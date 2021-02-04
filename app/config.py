@@ -20,11 +20,11 @@ class Settings(BaseSettings):
     DB_PATH: str
     SECRET_KEY: str
     ROOT_ACCOUNT: str
-    ROOT_PASSWD: str
+    ROOT_password: str
 
     class Config:
         # 可以使用 .env
-        env_file = '.env'
+        env_file = '../.env'
         env_file_encoding = 'utf-8'
         # 也可以使用 Docker Secrets
         # docker secrets default location

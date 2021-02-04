@@ -74,8 +74,8 @@ def get_logs_all(skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
 
 @app.get('/log/{id_account}', response_model=UserActionLog)
 def get_logs(id_account: Union[int, str], skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
-    logs = crud.get_user_action_log(db, id_account, skip, limit) if type(id_account) is int \
-        else crud.get_user_action_log_by_account(db, id_account, skip, limit)
+    logs = crud.get_user_action_logs(db, id_account, skip, limit) if type(id_account) is int \
+        else crud.get_user_action_logs_by_account(db, id_account, skip, limit)
     if logs is None:
         raise HTTPException(status_code=404, detail='Log not found')
     return logs

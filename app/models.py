@@ -8,7 +8,6 @@
 @description: 
 """
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.orm import relationship
 
 from app.database import Base
 
@@ -18,7 +17,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     account = Column(String, unique=True, index=True)
-    passwd = Column(String)
+    password = Column(String)
     deleted = Column(Boolean, default=False)
 
     # user_action_log = relationship('User', back_populates='user')
@@ -32,6 +31,5 @@ class UserActionLog(Base):
     time = Column(String)
     success = Column(Boolean)
     description = Column(String, nullable=True)
-    deleted = Column(Boolean, default=False)
 
-    user = relationship('User', back_populates='user_action_log')
+    # user = relationship('User', back_populates='user_action_log')

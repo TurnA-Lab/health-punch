@@ -81,9 +81,9 @@ def login(session: Session, username: str, password: str) -> Session:
     # 解析 HTML
     tree = fromstring(res.content)
     # 获取用户名，不存在（即失败）则返回空
-    username = search('Name = \"(.*)\"', tree.xpath('//script[last()]/text()')[-1]).group(1)
-
-    if username is None:
+    try:
+        username = search('Name = \"(.*)\"', tree.xpath('//script[last()]/text()')[-1]).group(1)
+    except AttributeError:
         raise StepErr("0: 登录失败")
     else:
         return session

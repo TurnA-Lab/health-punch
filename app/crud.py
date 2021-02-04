@@ -28,7 +28,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 50):
 
 
 def create_user(db: Session, user: UserCreate):
-    new_user = User(account=user.account, passwd=cisco_type7.hash(user.passwd))
+    new_user = User(account=user.account, password=cisco_type7.hash(user.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -50,32 +50,32 @@ def delete_user_by_account(db: Session, account: str):
     return user
 
 
-def verify_user_passwd(db: Session, account: str, passwd: str):
+def verify_user_password(db: Session, account: str, password: str):
     user = db.query(User).filter(User.account == account).first()
-    return check_encrypted(passwd, user.encrypted)
+    return check_encrypted(password, user.encrypted)
 
 
-def update_user_passwd(db: Session, account: str, passwd: str):
+def update_user_password(db: Session, account: str, password: str):
     user = db.query(User).filter(User.account == account)
-    user.update({'passwd': cisco_type7.hash(passwd)})
+    user.update({'password': cisco_type7.hash(password)})
     db.commit()
     return user
 
 
-def get_user_action_log(db: Session, user_id: int, skip: int = 0, limit: int = 50):
+def get_user_action_logs(db: Session, user_id: int, skip: int = 0, limit: int = 50):
     return db.query(UserActionLog).filter(UserActionLog.user_id == user_id).offset(skip).limit(limit).all()
 
 
-def get_user_action_log_by_account(db: Session, account: str, skip: int = 0, limit: int = 50):
+def get_user_action_logs_by_account(db: Session, account: str, skip: int = 0, limit: int = 50):
     user_id = get_user_by_account(db, account)
-    return get_user_action_log(db, user_id, skip, limit)
+    return get_user_action_logs(db, user_id, skip, limit)
 
 
-def get_user_action_logs(db: Session, skip: int = 0, limit: int = 50):
+def get_user_action_logs_all(db: Session, skip: int = 0, limit: int = 50):
     return db.query(UserActionLog).offset(skip).limit(limit).all()
 
 
-def create_user_action_logs(db: Session, action_log: UserActionLogCreate, user_id: int):
+def create_user_action_log(db: Session, action_log: UserActionLogCreate, user_id: int):
     new_item = UserActionLog(**action_log.dict(), user_id=user_id)
     db.add(new_item)
     db.commit()

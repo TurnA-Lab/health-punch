@@ -14,7 +14,7 @@ from pydantic.main import BaseModel
 
 class UserActionLogBase(BaseModel):
     time: str
-    success: str
+    success: bool
     description: Optional[str] = None
 
 
@@ -35,7 +35,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    passwd: str
+    password: str
 
 
 class User(UserBase):
