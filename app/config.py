@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     version: str = '0.1.0'
 
     # 需要传入的
+    PORT: int
     DB_PATH: str
     SECRET_KEY: str
     ROOT_ACCOUNT: str

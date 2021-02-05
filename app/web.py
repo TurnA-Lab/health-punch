@@ -18,6 +18,7 @@ from app import crud
 from app.config import Settings, get_settings
 from app.database import Base, engine, SessionLocal
 from app.schemas import User, UserCreate, UserActionLog
+from app.util import Logger
 
 Base.metadata.create_all(bind=engine)
 
@@ -91,5 +92,11 @@ def get_logs(id_account: Union[int, str], skip: int = 0, limit: int = 50, db: Se
     return logs
 
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+def main():
+    Logger(__name__).get_log().info('Start Init Server')
+    uvicorn.run(app, host='127.0.0.1', port=get_settings().PORT)
+    pass
+
+
+if __name__ == '__main__':
+    main()
