@@ -94,7 +94,7 @@ def get_logs(id_account: Union[int, str], skip: int = 0, limit: int = 50, db: Se
 
 def main():
     Logger(__name__).get_log().info('Start Init Server')
-    uvicorn.run(app, host='127.0.0.1', port=get_settings().PORT)
+    uvicorn.run(app, host='0.0.0.0', port=get_settings().PORT)
     pass
 
 
