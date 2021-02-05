@@ -14,12 +14,12 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from passlib.handlers.cisco import cisco_type7
 from sqlalchemy.orm import Session
 
-from app.config import get_settings
-from app.crud import get_user_by_account, create_user_action_log
-from app.models import User
-from app.schemas import UserActionLogCreate
-from app.util import Logger
-from app.web import get_db
+from config import get_settings
+from crud import get_user_by_account, create_user_action_log
+from models import User
+from schemas import UserActionLogCreate
+from util import Logger
+from web import get_db
 
 
 # TODO: 执行失败后，放入另一个队列，再执行一次
@@ -62,7 +62,7 @@ def main():
     scheduler = BlockingScheduler({
         'apscheduler.jobstores.default': {
             'type': 'sqlalchemy',
-            'url': f'sqlite:///{get_settings().DB_PATH}'
+            'url': f'sqlite:///{get_settings().db_path}'
         },
         'apscheduler.executors.default': {
             'class': 'apscheduler.executors.pool:ThreadPoolExecutor',

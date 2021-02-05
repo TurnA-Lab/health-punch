@@ -15,10 +15,10 @@ from pydantic import BaseSettings
 class Settings(BaseSettings):
     app_name: str = '自动健康打卡'
     version: str = '0.1.0'
+    db_path: str = '../data/app.sqlite'
 
     # 需要传入的
     PORT: int
-    DB_PATH: str
     SECRET_KEY: str
     ROOT_ACCOUNT: str
     ROOT_password: str

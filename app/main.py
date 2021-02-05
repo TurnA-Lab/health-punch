@@ -9,9 +9,9 @@
 """
 from multiprocessing.context import Process
 
-from app.scheduler import main as scheduler_main
-from app.util import Logger
-from app.web import main as web_main
+from scheduler import main as scheduler_main
+from util import Logger
+from web import main as web_main
 
 
 def main():

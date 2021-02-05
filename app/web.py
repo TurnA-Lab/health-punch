@@ -14,11 +14,11 @@ import uvicorn
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app import crud
-from app.config import Settings, get_settings
-from app.database import Base, engine, SessionLocal
-from app.schemas import User, UserCreate, UserActionLog
-from app.util import Logger
+import crud
+from config import Settings, get_settings
+from database import Base, engine, SessionLocal
+from schemas import User, UserCreate, UserActionLog
+from util import Logger
 
 Base.metadata.create_all(bind=engine)
 
