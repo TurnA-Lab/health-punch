@@ -22,7 +22,8 @@ FROM base
 
 COPY --from=builder /root/wheels /root/wheels
 
-RUN apk add --no-cache libxml2-dev libxslt-dev
+# lxml 依赖
+RUN apk add --no-cache libxml2 libxslt
 
 RUN python -m pip install --no-cache --no-index /root/wheels/* \ 
  && rm -rf /root/wheels
