@@ -1,9 +1,3 @@
-'''
-Date: 2021-02-04 00:47:03
-LastEditors: Skye Young
-LastEditTime: 2021-02-05 21:07:34
-FilePath: \backend\app\database.py
-'''
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -13,13 +7,13 @@ FilePath: \backend\app\database.py
 @time: 2021/2/4 0004 0:47
 @description: 
 """
-import os
+# import os
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from config import get_settings
+from app.config import get_settings
 
 db_path = get_settings().db_path
 

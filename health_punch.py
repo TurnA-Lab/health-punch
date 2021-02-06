@@ -1,4 +1,4 @@
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -161,7 +161,7 @@ def lets_punch(session: Session, username: str) -> Session:
     else:
         res: dict = session.post(url, json=data).json()
         # 需要检查 result 是否存在，因为在出现系统异常的时候会没有
-        if 'result' not in res.keys() or res['result'] is not '1':
+        if 'result' not in res.keys() or res['result'] != '1':
             raise StepErr('0: 提交失败')
         else:
             return session

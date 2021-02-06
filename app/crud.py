@@ -10,9 +10,9 @@
 from passlib.handlers.cisco import cisco_type7
 from sqlalchemy.orm import Session
 
-from models import User, UserActionLog
-from schemas import UserCreate, UserActionLogCreate
-from util import check_encrypted
+from app.models import User, UserActionLog
+from app.schemas import UserCreate, UserActionLogCreate
+from app.util import check_encrypted
 
 
 def get_user(db: Session, user_id: int):
