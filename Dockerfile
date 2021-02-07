@@ -7,8 +7,7 @@ RUN apk update && apk upgrade
 # 先构建需要安装的包
 FROM base as builder
 
-# libxml2-dev 和 libxslt-dev 是构建 lxml 时的依赖
-RUN apk add --no-cache build-base libxml2-dev libxslt-dev
+RUN apk add --no-cache build-base 
 
 RUN python -m pip install --no-cache-dir -U pip wheel
 
@@ -22,11 +21,12 @@ FROM base
 
 COPY --from=builder /root/wheels /root/wheels
 
-# lxml 依赖
-RUN apk add --no-cache libxml2 libxslt
-
 RUN python -m pip install --no-cache --no-index /root/wheels/* \ 
  && rm -rf /root/wheels
+
+# 单独安装 lxml ，降低编译消耗
+RUN apk add --no-cache py3-lxml \
+ && mv /usr/lib/python3.8/site-packages/* /usr/local/lib/python3.8/site-packages/
 
 # 下面这么干主要是方便在容器中 debug，改改代码之类的，虽然我知道不应该这么干
 # 复制 health-punch
@@ -36,7 +36,7 @@ COPY ./health_punch.py  /service
 COPY ./.env             /service
 
 # 设置时区
-RUN apk add tzdata \
+RUN apk add --no-cache tzdata \
  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
  && echo Asia/Shanghai > /etc/timezone \
  && apk del tzdata

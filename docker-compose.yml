@@ -1,6 +1,7 @@
 version: '3'
 services:
   health_punch:
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
