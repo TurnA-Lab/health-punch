@@ -54,7 +54,7 @@ def get_users(skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
 
 @app.get('/user/{id_account}', response_model=User)
 def get_user(id_account: str, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, int(id_account)) if len(id_account) > 4 \
+    db_user = crud.get_user(db, int(id_account)) if len(id_account) < 4 \
         else crud.get_user_by_account(db, id_account)
     if db_user is None:
         raise HTTPException(status_code=404, detail='User not found')
@@ -64,6 +64,7 @@ def get_user(id_account: str, db: Session = Depends(get_db)):
 @app.post('/user/', response_model=User)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_account(db, user.account)
+
     if db_user is not None:
         raise HTTPException(status_code=404, detail='Account already exists')
     return crud.create_user(db, user)
@@ -71,8 +72,9 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @app.delete('/user/{id_account}', response_model=User)
 def delete_user(id_account: str, db: Session = Depends(get_db)):
-    db_user = crud.delete_user(db, int(id_account)) if len(id_account) > 4 \
-        else crud.get_user_by_account(db, id_account)
+    db_user = crud.delete_user(db, int(id_account)) if len(id_account) < 4 \
+        else crud.delete_user_by_account(db, id_account)
+    
     if db_user is None:
         raise HTTPException(status_code=404, detail='User not found')
     return db_user
@@ -88,7 +90,7 @@ def get_logs_all(skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
 
 @app.get('/log/{id_account}', response_model=List[UserActionLog])
 def get_logs(id_account: str, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
-    logs = crud.get_user_action_logs(db, int(id_account), skip, limit) if len(id_account) > 4 \
+    logs = crud.get_user_action_logs(db, int(id_account), skip, limit) if len(id_account) < 4 \
         else crud.get_user_action_logs_by_account(db, id_account, skip, limit)
     if logs is None:
         raise HTTPException(status_code=404, detail='Log not found')

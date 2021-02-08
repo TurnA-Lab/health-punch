@@ -16,37 +16,42 @@ from app.util import check_encrypted
 
 
 def get_user(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
+    return db.query(User).filter(User.id == user_id, User.deleted == False).first()
 
 
 def get_user_by_account(db: Session, account: str):
-    return db.query(User).filter(User.account == account).first()
+    return db.query(User).filter(User.account == account, User.deleted == False).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 50):
-    return db.query(User).offset(skip).limit(limit).all()
+    return db.query(User).filter(User.deleted is False).offset(skip).limit(limit).all()
 
 
 def create_user(db: Session, user: UserCreate):
-    new_user = User(account=user.account, password=cisco_type7.hash(user.password))
-    db.add(new_user)
+    new_user = db.query(User).filter(User.account == user.account).first()
+    if new_user is None:
+        new_user = User(account=user.account, password=cisco_type7.hash(user.password))
+        db.add(new_user)
+    else:
+        new_user.deleted = False
     db.commit()
     db.refresh(new_user)
-
     return new_user
 
 
 def delete_user(db: Session, user_id: int):
-    user = db.query(User).filter(User.id == user_id)
-    user.update({'deleted': True})
+    user = db.query(User).filter(User.id == user_id).first()
+    user.deleted = True
     db.commit()
+    db.refresh(user)
     return user
 
 
 def delete_user_by_account(db: Session, account: str):
-    user = db.query(User).filter(User.account == account)
-    user.update({'deleted': True})
+    user = db.query(User).filter(User.account == account).first()
+    user.deleted = True
     db.commit()
+    db.refresh(user)
     return user
 
 
@@ -56,9 +61,10 @@ def verify_user_password(db: Session, account: str, password: str):
 
 
 def update_user_password(db: Session, account: str, password: str):
-    user = db.query(User).filter(User.account == account)
-    user.update({'password': cisco_type7.hash(password)})
+    user = db.query(User).filter(User.account == account).first()
+    user.password = cisco_type7.hash(password)
     db.commit()
+    db.refresh(user)
     return user
 
 
