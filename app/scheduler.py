@@ -8,6 +8,7 @@
 @description: 
 """
 from datetime import datetime
+from sqlite3 import connect
 from typing import List
 
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -57,6 +58,15 @@ def health_punch_task():
 
 def main():
     settings = get_settings()
+
+    log.info('Start Clear Previous Scheduler')
+
+    connection = connect(settings.db_path)
+    cursor = connection.cursor()
+    cursor.execute('DROP TABLE IF EXISTS apscheduler_jobs ;')
+    connection.close()
+
+    log.info('Previous Scheduler Cleared')
 
     log.info('Start Init Scheduler')
 

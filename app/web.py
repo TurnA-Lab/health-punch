@@ -7,8 +7,7 @@
 @time: 2021/2/5 0005 1:39
 @description: 
 """
-
-from typing import Union
+from typing import List
 
 import uvicorn
 from fastapi import FastAPI, Depends, HTTPException
@@ -45,16 +44,18 @@ async def info(settings: Settings = Depends(get_settings)):
     }
 
 
-@app.get('/user/', response_model=User)
+@app.get('/user/', response_model=List[User])
 def get_users(skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip, limit)
+    if users is None:
+        raise HTTPException(status_code=404, detail='Users not found')
     return users
 
 
 @app.get('/user/{id_account}', response_model=User)
-def get_user(id_account: Union[int, str], db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, id_account) if len(id_account) > 4 \
-        else crud.get_user_by_account(db, str(id_account))
+def get_user(id_account: str, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, int(id_account)) if len(id_account) > 4 \
+        else crud.get_user_by_account(db, id_account)
     if db_user is None:
         raise HTTPException(status_code=404, detail='User not found')
     return db_user
@@ -69,23 +70,25 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @app.delete('/user/{id_account}', response_model=User)
-def delete_user(id_account: Union[int, str], db: Session = Depends(get_db)):
-    db_user = crud.delete_user(db, id_account) if len(id_account) > 4 \
-        else crud.get_user_by_account(db, str(id_account))
+def delete_user(id_account: str, db: Session = Depends(get_db)):
+    db_user = crud.delete_user(db, int(id_account)) if len(id_account) > 4 \
+        else crud.get_user_by_account(db, id_account)
     if db_user is None:
         raise HTTPException(status_code=404, detail='User not found')
     return db_user
 
 
-@app.get('/log/', response_model=UserActionLog)
+@app.get('/log/', response_model=List[UserActionLog])
 def get_logs_all(skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
     logs = crud.get_user_action_logs(db, skip, limit)
+    if logs is None:
+        raise HTTPException(status_code=404, detail='Logs not found')
     return logs
 
 
-@app.get('/log/{id_account}', response_model=UserActionLog)
-def get_logs(id_account: Union[int, str], skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
-    logs = crud.get_user_action_logs(db, id_account, skip, limit) if type(id_account) is int \
+@app.get('/log/{id_account}', response_model=List[UserActionLog])
+def get_logs(id_account: str, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
+    logs = crud.get_user_action_logs(db, int(id_account), skip, limit) if len(id_account) > 4 \
         else crud.get_user_action_logs_by_account(db, id_account, skip, limit)
     if logs is None:
         raise HTTPException(status_code=404, detail='Log not found')
