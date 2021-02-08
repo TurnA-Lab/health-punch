@@ -24,7 +24,7 @@ def get_user_by_account(db: Session, account: str):
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 50):
-    return db.query(User).filter(User.deleted is False).offset(skip).limit(limit).all()
+    return db.query(User).filter(User.deleted == False).offset(skip).limit(limit).all()
 
 
 def create_user(db: Session, user: UserCreate):
