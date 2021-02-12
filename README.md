@@ -2,9 +2,9 @@
 
 定时健康打卡。
 
-最核心的功能从 [Thredreams](https://github.com/thredreams) （未发布）的代码修改而来，当然代码是完全不一样的。
+最核心的功能从 [Thredreams](https://github.com/thredreams)（未发布）的代码修改而来，当然代码是完全不一样的。
 
-目前的版本除了 [health_punch.py](./health_punch.py) 中提供的上述核心功能，还有一个尚未完善的任务管理系统，并可以快速部署为 Docker 镜像，以供使用。
+目前的版本除了 [health_punch.py](./health_punch.py) 中提供的上述核心功能，还有一个功能基本完善的任务管理系统，并可以快速部署到 Docker ，方便使用。
 
 ## 食用指南
 
@@ -18,7 +18,7 @@
 
 ### Docker
 
-> 如果你从未安装过 Docker ，请阅读 [《安装指南》](https://docs.docker.com/engine/install/) ，进行安装。
+> 如果你从未安装过 Docker ，请阅读[《安装指南》](https://docs.docker.com/engine/install/)，进行安装。
 
 当然，我还提供了一个快捷有效的方式，实现定时打卡的功能，并提供任务管理等额外的功能：
 

@@ -5,7 +5,7 @@
 @file: health_punch.py
 @author: Skye Young
 @time: 2021/2/2 0002 14:46
-@description: 由 https://github.com/thredreams （他并没有发布）的代码整理、修改而来
+@description: 由 https://github.com/thredreams（他并没有发布）的代码整理、修改而来
 """
 from functools import partial
 from re import search
