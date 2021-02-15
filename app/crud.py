@@ -73,8 +73,8 @@ def get_user_action_logs(db: Session, user_id: int, skip: int = 0, limit: int = 
 
 
 def get_user_action_logs_by_account(db: Session, account: str, skip: int = 0, limit: int = 50):
-    user_id = get_user_by_account(db, account)
-    return get_user_action_logs(db, user_id, skip, limit)
+    user = get_user_by_account(db, account)
+    return get_user_action_logs(db, user.id, skip, limit)
 
 
 def get_user_action_logs_all(db: Session, skip: int = 0, limit: int = 50):
