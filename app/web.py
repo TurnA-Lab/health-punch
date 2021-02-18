@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 from app import crud
 from app.config import Settings, get_settings
 from app.database import Base, engine, SessionLocal
+from app.scheduler import health_punch_task
 from app.schemas import User, UserCreate, UserActionLog
 from app.util import Logger
 
@@ -95,6 +96,17 @@ def get_logs(id_account: str, skip: int = 0, limit: int = 50, db: Session = Depe
     if logs is None:
         raise HTTPException(status_code=404, detail='Log not found')
     return logs
+
+
+@app.get('/punch/', response_model=List[UserActionLog])
+def exec_task(db: Session = Depends(get_db)):
+    logs = crud.get_user_action_logs_all(db)
+    health_punch_task(db)
+    new_logs = crud.get_user_action_logs_all(db)
+    diff_logs = list(set(new_logs).difference(set(logs)))
+    if diff_logs is None:
+        raise HTTPException(status_code=404, detail='Log not found')
+    return diff_logs
 
 
 def main():

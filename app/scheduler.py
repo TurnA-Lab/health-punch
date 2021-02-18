@@ -20,7 +20,6 @@ from app.crud import get_user_by_account, create_user_action_log
 from app.models import User
 from app.schemas import UserActionLogCreate
 from app.util import Logger
-from app.web import get_db
 
 log = Logger(__name__).get_log()
 
@@ -28,10 +27,15 @@ log = Logger(__name__).get_log()
 # TODO: 执行失败后，放入另一个队列，再执行一次
 # TODO: 执行失败两次后，发起通知
 # TODO: 通知接入 Server 酱，或邮件
-def health_punch_task():
+def health_punch_task(db_session: Session = None):
     from health_punch import inited_session, F, login, lets_punch, logout, StepErr
 
-    db: Session = next(get_db())
+    if db_session is None:
+        from app.web import get_db
+        db = next(get_db())
+    else:
+        db = db_session
+
     users: List[User] = db.query(User).all()
     sess = inited_session()
 
@@ -82,8 +86,10 @@ def main():
         'apscheduler.job_defaults.max_instances': '3',
         'apscheduler.timezone': 'Asia/Shanghai',
     })
-
-    scheduler.add_job(health_punch_task, 'cron', hour=settings.TASK_HOUR, minute=settings.TASK_MINUTE)
+    # 默认延迟两个小时
+    misfire_grace_time = 2 * 60 * 60
+    scheduler.add_job(health_punch_task, 'cron', hour=settings.TASK_HOUR, minute=settings.TASK_MINUTE,
+                      misfire_grace_time=misfire_grace_time)
     log.info('Scheduler Added Health Punch Task')
 
     try:
